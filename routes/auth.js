@@ -15,6 +15,6 @@ router.post( '',
     check( 'password', 'El password es obligatorio' ).not().isEmpty(), 
     validarCampos
   ], 
-  login ),
+  login );
 
 module.exports = router;
