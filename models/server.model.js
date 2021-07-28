@@ -2,6 +2,9 @@ require( 'colors' );
 const express = require( 'express' );
 const cors = require( 'cors' );
 
+// Database
+const { dbConnection } = require('../database/config.db');
+
 
 class Server {
   constructor() {
@@ -13,10 +16,15 @@ class Server {
     }
 
     //TODO: Db connect
+    this.connectDB();
     
     // Methods
     this.middlewares();
     this.routes();
+  }
+
+  async connectDB() {
+    await dbConnection();
   }
 
   middlewares() {
