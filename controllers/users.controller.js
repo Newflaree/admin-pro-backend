@@ -1,6 +1,9 @@
 // Express
 const { request, response } = require( 'express' );
 
+// Model
+const User = require( '../models/user.model' );
+
 
 const getUsers = ( req = request, res = response ) => {
   res.json({
@@ -15,9 +18,7 @@ const getUser = ( req = request, res = response ) => {
 }
 
 const createUser = ( req = request, res = response ) => {
-  res.json({
-    msg: 'Hello from controller - post'
-  });
+
 }
 
 const updateUser = ( req = request, res = response ) => {

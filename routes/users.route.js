@@ -1,3 +1,6 @@
+/*
+ *  Route: /api/users
+ */
 // Express
 const { Router } = require( 'express' );
 
