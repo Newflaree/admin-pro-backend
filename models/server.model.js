@@ -12,10 +12,10 @@ class Server {
     this.port = process.env.PORT;
 
     this.apiPaths = {
+      login: '/api/login',
       users: '/api/users'
     }
 
-    //TODO: Db connect
     this.connectDB();
     
     // Methods
@@ -39,6 +39,7 @@ class Server {
   }
 
   routes() {
+    this.app.use( this.apiPaths.login, require( '../routes/auth.route' ) );
     this.app.use( this.apiPaths.users, require( '../routes/users.route' ) );
   }
 

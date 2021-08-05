@@ -1,5 +1,7 @@
 // Express
 const { request, response } = require( 'express' );
+// bcryptjs
+const bcrypt = require( 'bcryptjs' );
 
 // Model
 const User = require( '../models/user.model' );
@@ -9,6 +11,7 @@ const getUsers = async( req = request, res = response ) => {
   const users = await User.find( {}, 'name email role google status' );
 
   res.json({
+    ok: true,
     users
   });
 }
@@ -20,43 +23,46 @@ const getUser = ( req = request, res = response ) => {
 }
 
 const createUser = async( req = request, res = response ) => {
-  const { name, password, email } = req.body;  
-  
-  try {
-    const userExists = await User.findOne({ email });
+  const { email, name, password } = req.body;
+  const user = new User({ email, name, password });
 
-    if ( userExists ) {
-      return res.status( 500 ).json({
-        ok: false,
-        msg: 'There is already a user with that email'
-      });
-    }
+  const salt = bcrypt.genSaltSync();
+  user.password = bcrypt.hashSync( password, salt );
 
-    const user = new User( req.body );
-    await user.save();
+  await user.save();
 
-    res.json({
-      user
-    });
+  res.status( 201 ).json({
+    ok: true,
+    user
+  });
 
-  } catch ( err ) {
-    console.log( err );
-    res.status( 500 ).json({
-      ok: false,
-      msg: 'Unexpected error'
-    });
-  }
 }
 
-const updateUser = ( req = request, res = response ) => {
+const updateUser = async( req = request, res = response ) => {
+  const { id } = req.params;
+  const { _id, password, google, status, email, ...rest } = req.body;
+
+  if ( password ) {
+    const salt = bcrypt.genSaltSync();
+    rest.password = bcrypt.hashSync( password, salt );
+  }
+
+  const user = await User.findByIdAndUpdate( id, rest, { new: true } );
+
   res.json({
-    msg: 'Hello from controller - update'
+    ok: true,
+    user
   });
 }
 
-const deleteUser = ( req = request, res = response ) => {
+const deleteUser = async( req = request, res = response ) => {
+  const { id } = req.params;
+
+  const user = await User.findByIdAndUpdate( id, { status: false }, { new: true } );
+
   res.json({
-    msg: 'Hello from controller - delete'
+    ok: true,
+    user
   });
 }
 
