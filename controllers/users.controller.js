@@ -3,39 +3,72 @@ const { request, response } = require( 'express' );
 // bcryptjs
 const bcrypt = require( 'bcryptjs' );
 
-// Model
+// Helpers
+const { generateJWT } = require( '../helpers/generate-jwt.helper' );
+// Models
 const User = require( '../models/user.model' );
 
 
 const getUsers = async( req = request, res = response ) => {
-  const users = await User.find( {}, 'name email role google status' );
+  const { limit = 5, from = 0 } = req.query;
+  const query = { status: true };
+
+  const [ total, users ] = await Promise.all([
+    User.countDocuments( query ),
+    User.find( query )
+      .skip( Number( from ) )
+      .limit( Number( limit ) )
+  ]);
 
   res.json({
     ok: true,
-    users
+    total,
+    users,
+    uid: req.uid
   });
 }
 
-const getUser = ( req = request, res = response ) => {
+const getUser = async( req = request, res = response ) => {
+  const { id } = req.params;
+
+  // Find User
+  const user = await User.findById( id );
+
+  // Verify user status
+  if ( !user.status ) {
+    return res.status( 400 ).json({
+      ok: false,
+      msg: 'There is no user with that ID'
+    });
+  }
+
   res.json({
-    msg: 'Hello from controller - get:id'
+    ok: true,
+    user
   });
 }
 
 const createUser = async( req = request, res = response ) => {
   const { email, name, password } = req.body;
+
+  // Create a new user
   const user = new User({ email, name, password });
 
+  // Encrypt password
   const salt = bcrypt.genSaltSync();
   user.password = bcrypt.hashSync( password, salt );
 
+  // Save to DB
   await user.save();
+
+  // Generate JWT
+  const token = await generateJWT( user.id );
 
   res.status( 201 ).json({
     ok: true,
-    user
+    user,
+    token
   });
-
 }
 
 const updateUser = async( req = request, res = response ) => {

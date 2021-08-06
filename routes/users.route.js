@@ -6,10 +6,6 @@ const { Router } = require( 'express' );
 // Express-validator
 const { check } = require( 'express-validator' );
 
-// Helpers
-const { emailValidation, userValidation } = require( '../helpers/db-validators.helper' );
-// Middlewares
-const { validateFields } = require( '../middlewares/validate-fields.middleware' );
 // Controllers
 const {  
   getUsers,
@@ -18,14 +14,23 @@ const {
   updateUser,
   deleteUser
 } = require( '../controllers/users.controller' );
+// Helpers
+const { emailValidation, userIdValidation } = require( '../helpers/db-validators.helper' );
+// Middlewares
+const { validateFields } = require( '../middlewares/validate-fields.middleware' );
+const { validateJWT } = require( '../middlewares/validate-jwt.middleware' );
 
 
 const router = Router();
 
 // End points
-router.get( '/', getUsers );
+router.get( '/', validateJWT, getUsers );
 
-router.get( '/:id', getUser );
+router.get( '/:id', [
+  check( 'id', 'Not a valid ID' ).isMongoId(),
+  check( 'id' ).custom( userIdValidation ),
+  validateFields
+], getUser );
 
 router.post( '/', [
   check( 'name', 'The name is mandatory' ).not().isEmpty(),
@@ -37,14 +42,14 @@ router.post( '/', [
 
 router.put( '/:id', [
   check( 'id', 'Not a valid ID' ).isMongoId(),
-  check( 'id' ).custom( userValidation ),
+  check( 'id' ).custom( userIdValidation ),
   check( 'name', 'The name is mandatory' ).not().isEmpty(),
   validateFields
 ], updateUser );
 
 router.delete( '/:id', [
   check( 'id', 'Not a valid ID' ).isMongoId(),
-  check( 'id' ).custom( userValidation ),
+  check( 'id' ).custom( userIdValidation ),
   validateFields
 ], deleteUser );
 

@@ -3,7 +3,7 @@ const User = require( '../models/user.model' );
 
 
 // Users
-const userValidation = async( id = '' ) => {
+const userIdValidation = async( id = '' ) => {
   const idExists = await User.findById( id );
   if ( !idExists ) {
     throw new Error( 'There is no user with that ID' );
@@ -23,5 +23,5 @@ const emailValidation = async( email = '' ) => {
 // Exports
 module.exports = {
   emailValidation,
-  userValidation
+  userIdValidation
 }
