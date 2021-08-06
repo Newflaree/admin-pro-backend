@@ -41,6 +41,7 @@ router.post( '/', [
 ], createUser );
 
 router.put( '/:id', [
+  validateJWT,
   check( 'id', 'Not a valid ID' ).isMongoId(),
   check( 'id' ).custom( userIdValidation ),
   check( 'name', 'The name is mandatory' ).not().isEmpty(),
@@ -48,6 +49,7 @@ router.put( '/:id', [
 ], updateUser );
 
 router.delete( '/:id', [
+  validateJWT,
   check( 'id', 'Not a valid ID' ).isMongoId(),
   check( 'id' ).custom( userIdValidation ),
   validateFields
