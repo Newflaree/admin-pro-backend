@@ -8,17 +8,22 @@ const { check } = require( 'express-validator' );
 
 // Controllers
 const {  
+  createUser,
+  deleteUser,
   getUsers,
   getUser,
-  createUser,
   updateUser,
-  deleteUser
 } = require( '../controllers/users.controller' );
 // Helpers
-const { emailValidation, userIdValidation } = require( '../helpers/db-validators.helper' );
+const { 
+  emailValidation,
+  userIdValidation, 
+} = require( '../helpers' );
 // Middlewares
-const { validateFields } = require( '../middlewares/validate-fields.middleware' );
-const { validateJWT } = require( '../middlewares/validate-jwt.middleware' );
+const { 
+  validateFields, 
+  validateJWT,
+} = require( '../middlewares' );
 
 
 const router = Router();

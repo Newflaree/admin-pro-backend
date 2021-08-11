@@ -4,9 +4,9 @@ const { request, response } = require( 'express' );
 const bcrypt = require( 'bcryptjs' );
 
 // Helpers
-const { generateJWT } = require( '../helpers/generate-jwt.helper' );
+const { generateJWT } = require( '../helpers' );
 // Models
-const User = require( '../models/user.model' );
+const { User } = require( '../models' );
 
 
 const getUsers = async( req = request, res = response ) => {

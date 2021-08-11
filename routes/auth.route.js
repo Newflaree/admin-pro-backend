@@ -1,5 +1,5 @@
 /*
- *  Route: /api/login
+ *  Route: /api/auth
  */
 // Express
 const { Router } = require( 'express' );

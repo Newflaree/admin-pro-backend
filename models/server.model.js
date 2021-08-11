@@ -13,6 +13,10 @@ class Server {
 
     this.apiPaths = {
       auth: '/api/auth',
+      doctors: '/api/doctors',
+      hospitals: '/api/hospitals',
+      searches: '/api/searches',
+      uploads: '/api/uploads',
       users: '/api/users'
     }
  
@@ -39,8 +43,12 @@ class Server {
   }
 
   routes() {
-    this.app.use( this.apiPaths.auth, require( '../routes/auth.route' ) );
-    this.app.use( this.apiPaths.users, require( '../routes/users.route' ) );
+    this.app.use( this.apiPaths.auth,      require( '../routes/auth.route' ) );
+    this.app.use( this.apiPaths.doctors,   require( '../routes/doctors.route' ) );
+    this.app.use( this.apiPaths.hospitals, require( '../routes/hospitals.route' ) );
+    this.app.use( this.apiPaths.searches,  require( '../routes/searches.route' ) );
+    this.app.use( this.apiPaths.uploads,   require( '../routes/uploads.route' ) );
+    this.app.use( this.apiPaths.users,     require( '../routes/users.route' ) );
   }
 
   listen() {
