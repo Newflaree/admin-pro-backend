@@ -3,20 +3,35 @@
  */
 // Express
 const { Router } = require( 'express' );
+// Express-validator
+const { check } = require( 'express-validator' );
 
 // Controllers
-const { fileUpload } = require( '../controllers/uploads.controller' );
-//
+const { 
+  uploadCloudinaryImage, 
+  showImega 
+} = require( '../controllers/uploads.controller' );
 // Middlewares
-const { validateJWT, validateFields } = require( '../middlewares' );
+const { 
+  validateFields, 
+  validateFile,
+  validateJWT, 
+} = require( '../middlewares' );
 
 
 const router = Router();
 
+router.get( '/:collection/:id', [
+  check( 'id', 'Not a valid ID' ).isMongoId(),
+  validateFields
+], showImega );
+
 router.put( '/:collection/:id', [
   validateJWT,
+  validateFile,
+  check( 'id', 'Not a valid ID' ).isMongoId(),
   validateFields
-], fileUpload );
+], uploadCloudinaryImage );
 
 
 // Exports

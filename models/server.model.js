@@ -1,6 +1,11 @@
+// Colors
 require( 'colors' );
+//Express
 const express = require( 'express' );
+// Cors
 const cors = require( 'cors' );
+// FileUpload
+const expressFileupload = require( 'express-fileupload' );
 
 // Database
 const { dbConnection } = require('../database/config.db');
@@ -20,6 +25,7 @@ class Server {
       users: '/api/users'
     }
  
+    // Connect to DB
     this.connectDB();
     
     // Methods
@@ -40,6 +46,13 @@ class Server {
 
     // Public forder
     this.app.use( express.static( 'public' ) );
+
+    // File upload
+    this.app.use( expressFileupload({
+      useTempFiles: true,
+      tempFileDir: '/tmp/',
+      createParentPath: true
+    }) );
   }
 
   routes() {
