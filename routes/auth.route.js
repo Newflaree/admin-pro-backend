@@ -7,11 +7,11 @@ const { Router } = require( 'express' );
 const { check } = require( 'express-validator' );
 
 // Controllers
-const { login } = require( '../controllers/auth.controller' );
+const { googleSignIn, login, renewToken } = require( '../controllers/auth.controller' );
 // Helpers
-const { emailValidation } = require( '../helpers/db-validators.helper' );
+const { emailValidation } = require( '../helpers' );
 // Middlewares
-const { validateFields } = require( '../middlewares/validate-fields.middleware' );
+const { validateFields, validateJWT } = require( '../middlewares' );
 
 
 const router = Router();
@@ -22,6 +22,16 @@ router.post( '/login', [
   check( 'password', 'The password is mandatory' ).not().isEmpty(),
   validateFields
 ], login );
+
+router.post( '/google', [
+  check( 'id_token', 'The Google token is mandatory' ).not().isEmpty(),
+  validateFields
+], googleSignIn );
+
+router.get( '/renew', [
+  validateJWT,
+  validateFields
+], renewToken );
 
 
 // Exports

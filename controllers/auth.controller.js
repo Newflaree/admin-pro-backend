@@ -4,9 +4,9 @@ const { request, response } = require( 'express' );
 const bcrypt = require( 'bcryptjs' );
 
 // Helpers
-const { generateJWT } = require( '../helpers/generate-jwt.helper' );
+const { generateJWT, googleVerify } = require( '../helpers' );
 // Models
-const User = require( '../models/user.model' );
+const { User } = require( '../models' );
 
 
 const login = async( req = request, res = response ) => {
@@ -57,8 +57,68 @@ const login = async( req = request, res = response ) => {
   }
 }
 
+const googleSignIn = async( req = request, res = response ) => {
+  const { id_token } = req.body;
+
+  try {
+    const { email, name, img } = await googleVerify( id_token );
+
+    let user = await User.findOne({ email });
+    if ( !user ) {
+      const data = {
+        email,
+        name,
+        img,
+        password: '@@@@@@',
+        google: true
+      };
+      
+      user = new User( data );
+    } else {
+      user.google = true;
+      user.password = '@@@@@@';
+    }
+
+    await user.save();
+
+    if ( !user.status ) {
+      return res.staus( 401 ).json({
+        ok: false,
+        msg: 'Talk to the administrator, user blocked'
+      });
+    }
+
+    const token = await generateJWT( user.id );
+
+    res.json({
+      ok: true,
+      user,
+      token
+    });
+
+  } catch( err ) {
+    console.log( err );
+    res.status( 400 ).json({
+      ok: false,
+      msg: 'Google token is not valid'
+    });
+  }
+}
+
+const renewToken = async( req = request, res = response ) => {
+  const uid = req.uid;
+  const token = await generateJWT( uid );
+
+  res.json({
+    ok: true,
+    token
+  });
+}
+
 
 // Exports
 module.exports = {
-  login
+  googleSignIn,
+  login,
+  renewToken
 }

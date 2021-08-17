@@ -8,10 +8,12 @@ const { request, response } = require( 'express' );
 const cloudinary = require( 'cloudinary' ).v2;
 cloudinary.config( process.env.CLOUDINARY_URL );
 
-// Helpers
-const { uploadFile } = require( '../helpers' );
 // Models
-const { User, Doctor, Hospital } = require( '../models' );
+const { 
+  User, 
+  Doctor, 
+  Hospital 
+} = require( '../models' );
 
 
 // End Points
