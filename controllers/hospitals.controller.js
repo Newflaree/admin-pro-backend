@@ -29,8 +29,22 @@ const getHospitals = async( req = request, res = response ) => {
 }
 
 const getHospital = async( req = request, res = response ) => {
+  const { id } = req.params;
+
+  // Find Hospital
+  const hospital = await Hospital.findById( id );
+
+  // Verify hospital status
+  if ( !hospital.status ) {
+    return res.status( 400 ).json({
+      ok: false,
+      msg: 'There is no hospital with that ID'
+    });
+  }
+
   res.json({
-    msg: 'get - H'
+    ok: true,
+    hospital
   });
 }
 
@@ -52,8 +66,15 @@ const createHospital = async( req = request, res = response ) => {
 }
 
 const updateHospital = async( req = request, res = response ) => {
+  const { id } = req.params;
+  const { img, status, _id, ...rest } = req.body;
+  rest.name = rest.name.toUpperCase();
+
+  const hospital = await Hospital.findByIdAndUpdate( id, rest, { new: true } );
+
   res.json({
-    msg: 'put - H'
+    ok: true,
+    hospital
   });
 }
 

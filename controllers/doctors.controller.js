@@ -30,8 +30,22 @@ const getDoctors = async( req = request, res = response ) => {
 }
 
 const getDoctor = async( req = request, res = response ) => {
+  const { id } = req.params;
+
+  // Find Hospital
+  const doctor = await Doctor.findById( id );
+
+  // Verify user status
+  if ( !doctor.status ) {
+    return res.status( 400 ).json({
+      ok: false,
+      msg: 'There is no hospital with that ID'
+    });
+  }
+
   res.json({
-    msg: 'get - D'
+    ok: true,
+    doctor
   });
 }
 

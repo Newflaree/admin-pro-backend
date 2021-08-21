@@ -15,7 +15,7 @@ const {
   updateHospital,
 } = require( '../controllers/hospitals.controller' );
 // Helpers
-const { hospitalValidation } = require( '../helpers' );
+const { hospitalValidation, hospitalIdValidation } = require( '../helpers' );
 // Middlewares
 const { 
   validateFields,
@@ -37,9 +37,17 @@ router.post( '/', [
   validateFields
 ], createHospital );
 
-router.put( '/:id', updateHospital );
+router.put( '/:id', [
+  validateJWT,
+  check( 'name', 'The hospital name is mandatory' ).not().isEmpty(),
+  check( 'name' ).custom( hospitalValidation ),
+  check( 'id', 'Not a valid Mongo ID' ).isMongoId(),
+  check( 'id' ).custom( hospitalIdValidation ),
+  validateFields
+], updateHospital );
 
-router.delete( '/:id', deleteHospital );
+router.delete( '/:id', [
+], deleteHospital );
 
 
 // Exports
