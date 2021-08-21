@@ -74,13 +74,20 @@ const updateHospital = async( req = request, res = response ) => {
 
   res.json({
     ok: true,
-    hospital
+    hospital,
+    user: req.uid
   });
 }
 
 const deleteHospital = async( req = request, res = response ) => {
+  const { id } = req.params;
+
+  const hospital = await Hospital.findByIdAndUpdate( id, { status: false }, { new: true } );
+
   res.json({
-    msg: 'delete - H'
+    ok: true,
+    hospital,
+    user: req.uid
   });
 }
 

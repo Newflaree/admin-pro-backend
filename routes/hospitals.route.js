@@ -47,6 +47,9 @@ router.put( '/:id', [
 ], updateHospital );
 
 router.delete( '/:id', [
+  check( 'id', 'Not a valid Mongo ID' ).isMongoId(),
+  check( 'id' ).custom( hospitalIdValidation ),
+  validateFields
 ], deleteHospital );
 
 
