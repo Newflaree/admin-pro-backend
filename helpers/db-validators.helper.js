@@ -49,6 +49,14 @@ const doctorValidation = async( name = '' ) => {
   return true;
 }
 
+const doctorIdValidation = async( id = '' ) => {
+  const doctorExists = await Doctor.findById( id );
+  if ( !doctorExists ) {
+    throw new Error( 'There is no doctor with that ID' );
+  }
+  return true;
+}
+
 
 // Exports
 module.exports = {
@@ -57,4 +65,6 @@ module.exports = {
 
   hospitalIdValidation,
   hospitalValidation,
+
+  doctorIdValidation
 }

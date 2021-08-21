@@ -28,7 +28,12 @@ const router = Router();
 // End points
 router.get( '/', validateJWT, getHospitals );
 
-router.get( '/:id', getHospital );
+router.get( '/:id', [
+  validateJWT,
+  check( 'id', 'Not a valid Mongo ID' ).isMongoId(),
+  check( 'id' ).custom( hospitalIdValidation ),
+  validateFields
+], getHospital );
 
 router.post( '/', [
   validateJWT,
@@ -47,6 +52,7 @@ router.put( '/:id', [
 ], updateHospital );
 
 router.delete( '/:id', [
+  validateJWT,
   check( 'id', 'Not a valid Mongo ID' ).isMongoId(),
   check( 'id' ).custom( hospitalIdValidation ),
   validateFields

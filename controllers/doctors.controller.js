@@ -69,14 +69,43 @@ const createDoctor = async( req = request, res = response ) => {
 }
 
 const updateDoctor = async( req = request, res = response ) => {
+  const { id } = req.params;
+  const { _id, img, status, ...rest } = req.body;
+
+  let doctor = await Doctor.findById( id );
+  if ( !doctor.status ) {
+    return res.status( 400 ).json({
+      ok: false,
+      msg: 'There is no doctor with that ID'
+    });
+  }
+
+  doctor = await Doctor.findByIdAndUpdate( id, rest, { new: true } );
+
   res.json({
-    msg: 'put - D'
+    ok: true,
+    doctor,
+    user: req.uid
   });
+
 }
 
 const deleteDoctor = async( req = request, res = response ) => {
+  const { id } = req.params;
+
+  let doctor = await Doctor.findById( id );
+  if ( !doctor.status ) {
+    return res.status( 400 ).json({
+      ok: false,
+      msg: 'There is no doctor with that ID'
+    });
+  }
+
+  doctor = await Doctor.findByIdAndUpdate( id, { status: false }, { new: true } );
+
   res.json({
-    msg: 'delete - D'
+    ok: true,
+    doctor
   });
 }
 
